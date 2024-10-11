@@ -133,6 +133,18 @@ const pageTransition = {
   duration: 0.5,
 };
 
+const MobileMenuLink = ({ children, onClick, isActive }: { children: React.ReactNode; onClick: () => void; isActive: boolean }) => (
+  <motion.div
+    className={`text-2xl font-light tracking-wider ${isActive ? 'text-black' : 'text-gray-600'} hover:text-black transition-colors cursor-pointer`}
+    whileHover={{ scale: 1.05, x: 10 }}
+    whileTap={{ scale: 0.95 }}
+    transition={{ duration: 0.2 }}
+    onClick={onClick}
+  >
+    {children}
+  </motion.div>
+);
+
 export function LandingPage() {
   const [currentSection, setCurrentSection] = useState('home');
   const [direction, setDirection] = useState(0);
@@ -174,7 +186,7 @@ export function LandingPage() {
     <div className="min-h-screen bg-white text-black overflow-hidden font-light">
       <FluidBackground />
 
-      <header className="fixed top-0 left-0 w-full p-4 flex justify-between items-center z-20">
+      <header className="fixed top-0 left-0 w-full p-4 flex justify-between items-center z-50">
         <motion.div
           className="ml-4 cursor-none hidden md:block"
           initial={{ opacity: 0, y: -20 }}
@@ -203,22 +215,24 @@ export function LandingPage() {
         </div>
       </header>
 
-      {menuOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center md:hidden"
-        >
-          <nav className="flex flex-col space-y-6">
-            <AnimatedLink onClick={() => handleSectionChange('home')} isActive={currentSection === 'home'}>Home</AnimatedLink>
-            <AnimatedLink onClick={() => handleSectionChange('about')} isActive={currentSection === 'about'}>About</AnimatedLink>
-            <AnimatedLink onClick={() => handleSectionChange('art')} isActive={currentSection === 'art'}>Art</AnimatedLink>
-            <AnimatedLink onClick={() => handleSectionChange('contact')} isActive={currentSection === 'contact'}>Contact</AnimatedLink>
-          </nav>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-white bg-opacity-60 backdrop-blur-md z-40 flex flex-col items-center justify-center md:hidden"
+          >
+            <nav className="flex flex-col space-y-8">
+              <MobileMenuLink onClick={() => handleSectionChange('home')} isActive={currentSection === 'home'}>Home</MobileMenuLink>
+              <MobileMenuLink onClick={() => handleSectionChange('about')} isActive={currentSection === 'about'}>About</MobileMenuLink>
+              <MobileMenuLink onClick={() => handleSectionChange('art')} isActive={currentSection === 'art'}>Art</MobileMenuLink>
+              <MobileMenuLink onClick={() => handleSectionChange('contact')} isActive={currentSection === 'contact'}>Contact</MobileMenuLink>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <main ref={mainRef} className="h-screen overflow-y-auto">
         <AnimatePresence initial={false} mode="wait">
@@ -239,21 +253,24 @@ export function LandingPage() {
                 ))}
               </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center bg-white bg-opacity-70 p-4 z-10">
-                <Image
-                  src="/logo.png"
-                  alt="Bahar Sener Logo"
-                  width={120}
-                  height={120}
-                  className="mb-8 w-auto h-auto"
-                />
+                <div className="w-full flex justify-center">
+                  <Image
+                    src="/logo.png"
+                    alt="Bahar Sener Logo"
+                    width={120}
+                    height={120}
+                    className="mb-8"
+                    style={{ marginLeft: '-46px' }} // Changed from -43px to -46px
+                  />
+                </div>
                 <motion.div
-                  className="text-lg md:text-xl lg:text-2xl mb-4 text-gray-800 text-center font-light tracking-wide flex flex-col md:flex-row items-center justify-center md:space-x-4"
+                  className="text-lg md:text-xl lg:text-2xl mb-4 text-gray-800 text-center font-light tracking-wide flex items-center justify-center space-x-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                 >
                   <span>VISUAL ARTIST</span>
-                  <span className="hidden md:inline text-2xl md:text-3xl lg:text-4xl">·</span>
+                  <span className="text-2xl md:text-3xl lg:text-4xl">·</span>
                   <span>TATTOO ARTIST</span>
                 </motion.div>
                 <motion.p
