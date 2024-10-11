@@ -63,7 +63,7 @@ const ParallaxImage = ({ src, alt, index }: { src: string; alt: string; index: n
         alt={alt}
         fill
         className="object-cover"
-        quality={100}
+        sizes="100vw"
         priority={index === 0}
       />
     </motion.div>
@@ -197,7 +197,7 @@ export function LandingPage() {
           <AnimatedLink onClick={() => handleSectionChange('contact')} isActive={currentSection === 'contact'}>Contact</AnimatedLink>
         </nav>
         <div className="flex items-center md:hidden">
-          <button onClick={() => setMenuOpen(!menuOpen)} className="text-black">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="text-black z-50">
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -209,7 +209,7 @@ export function LandingPage() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 bg-white z-10 flex flex-col items-center justify-center md:hidden"
+          className="fixed inset-0 bg-white z-40 flex flex-col items-center justify-center md:hidden"
         >
           <nav className="flex flex-col space-y-6">
             <AnimatedLink onClick={() => handleSectionChange('home')} isActive={currentSection === 'home'}>Home</AnimatedLink>
@@ -220,7 +220,7 @@ export function LandingPage() {
         </motion.div>
       )}
 
-      <main ref={mainRef} className="h-screen overflow-hidden">
+      <main ref={mainRef} className="h-screen overflow-y-auto">
         <AnimatePresence initial={false} mode="wait">
           {currentSection === 'home' && (
             <motion.section
@@ -233,25 +233,27 @@ export function LandingPage() {
               custom={direction}
               transition={pageTransition}
             >
-              {images.map((src, index) => (
-                <ParallaxImage key={index} src={src} alt={`Artwork ${index + 1}`} index={index} />
-              ))}
+              <div className="absolute inset-0 z-0">
+                {images.map((src, index) => (
+                  <ParallaxImage key={src} src={src} alt={`Artwork ${index + 1}`} index={index} />
+                ))}
+              </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center bg-white bg-opacity-70 p-4 z-10">
                 <Image
                   src="/logo.png"
                   alt="Bahar Sener Logo"
                   width={120}
                   height={120}
-                  className="mb-8"
+                  className="mb-8 w-auto h-auto"
                 />
                 <motion.div
-                  className="text-lg md:text-xl lg:text-2xl mb-4 text-gray-800 text-center font-light tracking-wide flex items-center justify-center space-x-4"
+                  className="text-lg md:text-xl lg:text-2xl mb-4 text-gray-800 text-center font-light tracking-wide flex flex-col md:flex-row items-center justify-center md:space-x-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                 >
                   <span>VISUAL ARTIST</span>
-                  <span className="text-2xl md:text-3xl lg:text-4xl">·</span>
+                  <span className="hidden md:inline text-2xl md:text-3xl lg:text-4xl">·</span>
                   <span>TATTOO ARTIST</span>
                 </motion.div>
                 <motion.p
@@ -269,7 +271,7 @@ export function LandingPage() {
           {currentSection === 'about' && (
             <motion.section
               key="about"
-              className="h-screen overflow-y-auto pt-24"
+              className="min-h-screen pt-24 px-4"
               variants={pageVariants}
               initial="initial"
               animate="in"
@@ -284,7 +286,7 @@ export function LandingPage() {
           {currentSection === 'art' && (
             <motion.section
               key="art"
-              className="h-screen overflow-y-auto"
+              className="min-h-screen pt-24 px-4"
               variants={pageVariants}
               initial="initial"
               animate="in"
@@ -303,7 +305,7 @@ export function LandingPage() {
           {currentSection === 'contact' && (
             <motion.section
               key="contact"
-              className="h-screen flex flex-col justify-center items-center p-8 pt-24"
+              className="min-h-screen flex flex-col justify-center items-center p-8 pt-24"
               variants={pageVariants}
               initial="initial"
               animate="in"
