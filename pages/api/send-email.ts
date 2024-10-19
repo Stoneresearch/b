@@ -9,7 +9,7 @@ export default async function handler(
     const { name, email, phone, message } = req.body
 
     // Create a transporter using SMTP
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
       secure: false, // Use TLS
