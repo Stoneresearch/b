@@ -158,6 +158,45 @@ export function LandingPage() {
     '/bahar2.png',
   ];
 
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+
+  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFormStatus('submitting');
+
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setFormStatus('success');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      } else {
+        setFormStatus('error');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setFormStatus('error');
+    }
+  };
+
   const handleSectionChange = (section: string) => {
     const sections = ['home', 'about', 'art', 'contact'];
     const currentIndex = sections.indexOf(currentSection);
@@ -180,6 +219,11 @@ export function LandingPage() {
 
   const handleCloseFullscreenImage = () => {
     setFullscreenImage(null);
+  };
+
+  const handleArtClick = (artType: 'tattoo' | 'collage' | 'illustration') => {
+    handleSectionChange('art');
+    setArtSubsection(artType);
   };
 
   return (
@@ -260,18 +304,35 @@ export function LandingPage() {
                     width={120}
                     height={120}
                     className="mb-8"
-                    style={{ marginLeft: '-46px' }} // Changed from -43px to -46px
+                    style={{ marginLeft: '-46px' }}
                   />
                 </div>
                 <motion.div
-                  className="text-lg md:text-xl lg:text-2xl mb-4 text-gray-800 text-center font-light tracking-wide flex items-center justify-center space-x-4"
+                  className="text-lg md:text-xl lg:text-2xl mb-4 text-gray-800 text-center font-light tracking-wide flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                 >
-                  <span>VISUAL ARTIST</span>
-                  <span className="text-2xl md:text-3xl lg:text-4xl">·</span>
-                  <span>TATTOO ARTIST</span>
+                  <span 
+                    className="cursor-pointer hover:text-gray-600 transition-colors"
+                    onClick={() => handleArtClick('tattoo')}
+                  >
+                    TATTOO ART
+                  </span>
+                  <span className="hidden md:inline text-2xl md:text-3xl lg:text-4xl">·</span>
+                  <span 
+                    className="cursor-pointer hover:text-gray-600 transition-colors"
+                    onClick={() => handleArtClick('collage')}
+                  >
+                    COLLAGE ART
+                  </span>
+                  <span className="hidden md:inline text-2xl md:text-3xl lg:text-4xl">·</span>
+                  <span 
+                    className="cursor-pointer hover:text-gray-600 transition-colors"
+                    onClick={() => handleArtClick('illustration')}
+                  >
+                    ILLUSTRATION
+                  </span>
                 </motion.div>
                 <motion.p
                   className="text-sm md:text-base lg:text-lg max-w-2xl mx-auto mb-8 text-gray-700 p-4 text-center font-light"
@@ -341,26 +402,67 @@ export function LandingPage() {
                     Looking to book a tattoo appointment, request a commission, or ask a question? Contact me anytime!
                   </p>
                 </motion.div>
-                <form className="space-y-3">
+                <form onSubmit={handleSubmit} className="space-y-3">
                   <div className="flex flex-col space-y-1">
                     <label htmlFor="name" className="text-sm text-gray-700">Name</label>
-                    <input type="text" id="name" className="border border-gray-300 rounded-md p-2" />
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className="border border-gray-300 rounded-md p-2"
+                      required
+                    />
                   </div>
                   <div className="flex flex-col space-y-1">
                     <label htmlFor="email" className="text-sm text-gray-700">Email</label>
-                    <input type="email" id="email" className="border border-gray-300 rounded-md p-2" />
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="border border-gray-300 rounded-md p-2"
+                      required
+                    />
                   </div>
                   <div className="flex flex-col space-y-1">
                     <label htmlFor="phone" className="text-sm text-gray-700">Phone</label>
-                    <input type="tel" id="phone" className="border border-gray-300 rounded-md p-2" />
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="border border-gray-300 rounded-md p-2"
+                    />
                   </div>
                   <div className="flex flex-col space-y-1">
                     <label htmlFor="message" className="text-sm text-gray-700">Message</label>
-                    <textarea id="message" rows={4} className="border border-gray-300 rounded-md p-2" />
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      rows={4}
+                      className="border border-gray-300 rounded-md p-2"
+                      required
+                    />
                   </div>
-                  <button type="submit" className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 w-full">
-                    Send
+                  <button
+                    type="submit"
+                    className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 w-full"
+                    disabled={formStatus === 'submitting'}
+                  >
+                    {formStatus === 'submitting' ? 'Sending...' : 'Send'}
                   </button>
+                  {formStatus === 'success' && (
+                    <p className="text-green-600 text-sm mt-2">Message sent successfully!</p>
+                  )}
+                  {formStatus === 'error' && (
+                    <p className="text-red-600 text-sm mt-2">Error sending message. Please try again.</p>
+                  )}
                 </form>
               </div>
             </motion.section>

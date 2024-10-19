@@ -22,10 +22,6 @@ const works = {
         { src: '/tattoo3.jpg', title: 'Tattoo Work 3' },
         { src: '/tattoo4.jpg', title: 'Tattoo Work 4' },
         { src: '/tattoo5.jpg', title: 'Tattoo Work 5' },
-        { src: '/tattoo6.jpg', title: 'Tattoo Work 6' },
-        { src: '/tattoo7.jpg', title: 'Tattoo Work 7' },
-        { src: '/tattoo8.jpg', title: 'Tattoo Work 8' },
-        { src: '/tattoo9.jpg', title: 'Tattoo Work 9' },
     ],
     illustration: [
         { src: '/illustration1.jpg', title: 'Illustration Work 1' },
@@ -43,8 +39,6 @@ const works = {
         { src: '/collage2.png', title: 'Nature Remix' },
         { src: '/collage3.png', title: 'Retro Futurism' },
         { src: '/collage4.png', title: 'Pop Culture Mashup' },
-        { src: '/collage5.png', title: 'Surreal Landscapes' },
-        { src: '/collage6.png', title: 'Abstract Memories' },
     ],
 };
 
@@ -68,6 +62,157 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
     const handleImageError = (imageSrc: string) => {
         console.error(`Error loading image: ${imageSrc}`);
         setImageError(prev => ({ ...prev, [imageSrc]: true }));
+    };
+
+    const renderArtworks = (artworks: typeof works[keyof typeof works]) => {
+        if (artSubsection === 'collage') {
+            return (
+                <div className="grid grid-cols-2 gap-4">
+                    {artworks.map(({ src, title }, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="group relative overflow-hidden rounded-lg shadow-md"
+                        >
+                            <div className="aspect-square relative bg-gray-200">
+                                {!imageError[src] && (
+                                    <Image
+                                        src={src}
+                                        alt={title}
+                                        layout="fill"
+                                        objectFit="cover"
+                                        className="transition-transform duration-300 group-hover:scale-105"
+                                        onError={() => handleImageError(src)}
+                                        sizes="(max-width: 768px) 50vw, 33vw"
+                                        loading="lazy"
+                                    />
+                                )}
+                                {imageError[src] && (
+                                    <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                                        Image not available
+                                    </div>
+                                )}
+                            </div>
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300 flex items-center justify-center">
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    whileHover={{ opacity: 1 }}
+                                    className="text-white text-center p-4"
+                                >
+                                    <h3 className="text-lg font-light mb-2">{title}</h3>
+                                    <button
+                                        onClick={() => onFullscreenImage(src)}
+                                        className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center mx-auto"
+                                    >
+                                        <ZoomIn size={16} className="mr-1" /> View
+                                    </button>
+                                </motion.div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            );
+        } else if (artSubsection === 'tattoo') {
+            return (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    {artworks.map(({ src, title }, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="group relative overflow-hidden rounded-lg shadow-md"
+                        >
+                            <div className="aspect-square relative bg-gray-200">
+                                {!imageError[src] && (
+                                    <Image
+                                        src={src}
+                                        alt={title}
+                                        layout="fill"
+                                        objectFit="cover"
+                                        className="transition-transform duration-300 group-hover:scale-105"
+                                        onError={() => handleImageError(src)}
+                                        sizes="(max-width: 768px) 50vw, 33vw"
+                                        loading="lazy"
+                                    />
+                                )}
+                                {imageError[src] && (
+                                    <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                                        Image not available
+                                    </div>
+                                )}
+                            </div>
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300 flex items-center justify-center">
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    whileHover={{ opacity: 1 }}
+                                    className="text-white text-center p-4"
+                                >
+                                    <h3 className="text-lg font-light mb-2">{title}</h3>
+                                    <button
+                                        onClick={() => onFullscreenImage(src)}
+                                        className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center mx-auto"
+                                    >
+                                        <ZoomIn size={16} className="mr-1" /> View
+                                    </button>
+                                </motion.div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            );
+        }
+
+        return (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {artworks.map(({ src, title }, index) => (
+                    <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="group relative overflow-hidden rounded-lg shadow-md"
+                    >
+                        <div className="aspect-[3/4] relative bg-gray-200">
+                            {!imageError[src] && (
+                                <Image
+                                    src={src}
+                                    alt={title}
+                                    layout="fill"
+                                    objectFit="cover"
+                                    className="transition-transform duration-300 group-hover:scale-105"
+                                    onError={() => handleImageError(src)}
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    loading="lazy"
+                                />
+                            )}
+                            {imageError[src] && (
+                                <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                                    Image not available
+                                </div>
+                            )}
+                        </div>
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300 flex items-center justify-center">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                whileHover={{ opacity: 1 }}
+                                className="text-white text-center p-4"
+                            >
+                                <h3 className="text-lg font-light mb-2">{title}</h3>
+                                <button
+                                    onClick={() => onFullscreenImage(src)}
+                                    className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center mx-auto"
+                                >
+                                    <ZoomIn size={16} className="mr-1" /> View
+                                </button>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        );
     };
 
     return (
@@ -127,52 +272,7 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                             {categories.find(c => c.name === artSubsection)?.title}
                         </h2>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {works[artSubsection].map(({ src, title }, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className="group relative overflow-hidden rounded-lg shadow-md"
-                            >
-                                <div className="aspect-[3/4] relative bg-gray-200">
-                                    {!imageError[src] && (
-                                        <Image
-                                            src={src}
-                                            alt={title}
-                                            layout="fill"
-                                            objectFit="cover"
-                                            className="transition-transform duration-300 group-hover:scale-105"
-                                            onError={() => handleImageError(src)}
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            loading="lazy"
-                                        />
-                                    )}
-                                    {imageError[src] && (
-                                        <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-                                            Image not available
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300 flex items-center justify-center">
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        whileHover={{ opacity: 1 }}
-                                        className="text-white text-center p-4"
-                                    >
-                                        <h3 className="text-lg font-light mb-2">{title}</h3>
-                                        <button
-                                            onClick={() => onFullscreenImage(src)}
-                                            className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center mx-auto"
-                                        >
-                                            <ZoomIn size={16} className="mr-1" /> View
-                                        </button>
-                                    </motion.div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
+                    {renderArtworks(works[artSubsection])}
                 </div>
             )}
         </div>
