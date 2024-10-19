@@ -154,8 +154,8 @@ export function LandingPage() {
   const [artSubsection, setArtSubsection] = useState<'tattoo' | 'illustration' | 'collage' | null>(null);
 
   const images = [
-    '/bahar1.png',
-    '/bahar2.png',
+    '/bahar1.png',  // Reverted back to .png
+    '/bahar2.jpg',  // This remains as .jpg as per your previous request
   ];
 
   const [formData, setFormData] = useState({
@@ -297,14 +297,14 @@ export function LandingPage() {
                 ))}
               </div>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center bg-white bg-opacity-70 p-4 z-10">
-                <div className="w-full flex justify-center">
+                <div className="w-full flex justify-center mb-4 md:mb-8">
                   <Image
                     src="/logo.png"
                     alt="Bahar Sener Logo"
                     width={120}
                     height={120}
-                    className="mb-8"
-                    style={{ marginLeft: '-46px' }}
+                    className="md:mb-0"
+                    style={{ marginLeft: '0px' }}
                   />
                 </div>
                 <motion.div
