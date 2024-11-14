@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useAnimation, useScroll, useTransform } from '
 import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 import { ArtSection } from './art-section';
+import { Instagram } from 'lucide-react';
 
 const AnimatedLink = ({ children, onClick, isActive }: { children: React.ReactNode; onClick: () => void; isActive: boolean }) => (
   <motion.span
@@ -148,6 +149,14 @@ const MobileMenuLink = ({ children, onClick, isActive }: { children: React.React
   </motion.div>
 );
 
+const socialLinks = [
+  {
+    name: 'Instagram',
+    href: 'https://instagram.com/baharssener',
+    icon: Instagram
+  }
+];
+
 export function LandingPage() {
   const [currentSection, setCurrentSection] = useState('home');
   const [direction, setDirection] = useState(0);
@@ -224,9 +233,9 @@ export function LandingPage() {
     setFullscreenImage(null);
   };
 
-  const handleArtClick = (artType: 'tattoo' | 'collage' | 'illustration') => {
+  const handleArtClick = (subsection: 'tattoo' | 'collage' | 'illustration') => {
     handleSectionChange('art');
-    setArtSubsection(artType);
+    handleArtSubsectionChange(subsection);
   };
 
   return (
@@ -282,258 +291,249 @@ export function LandingPage() {
       </AnimatePresence>
 
       <main ref={mainRef} className="h-screen overflow-y-auto">
-        <AnimatePresence initial={false} mode="wait">
-          {currentSection === 'home' && (
-            <motion.section
-              key="home"
-              className="relative h-screen flex items-center justify-center overflow-hidden"
-              variants={pageVariants}
-              initial="initial"
-              animate="in"
-              exit="out"
-              custom={direction}
-              transition={pageTransition}
-            >
-              <div className="absolute inset-0 z-0">
-                {images.map((src, index) => (
-                  <ParallaxImage key={src} src={src} alt={`Artwork ${index + 1}`} index={index} />
-                ))}
-              </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center 
-                              bg-gradient-to-b from-white/80 via-white/70 to-transparent backdrop-blur-[1px] p-4 z-10">
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8 }}
-                  className="w-full flex justify-center mb-8"
-                >
-                  <Image
-                    src="/logo.png"
-                    alt="Bahar Sener Logo"
-                    width={150}
-                    height={150}
-                    className="drop-shadow-lg"
-                  />
-                </motion.div>
-                <motion.div
-                  className="text-xl md:text-2xl lg:text-3xl mb-6 text-gray-800 tracking-wide 
-                             flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.8 }}
-                >
-                  {['TATTOO ART', 'COLLAGE ART', 'ILLUSTRATION'].map((text, index) => (
-                    <motion.span
-                      key={text}
-                      className="cursor-pointer relative group"
-                      onClick={() => handleArtClick(text.split(' ')[0].toLowerCase() as 'tattoo' | 'collage' | 'illustration')}
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      {text}
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 
-                                     group-hover:w-full" />
-                    </motion.span>
+        <div className="relative z-0">
+          <AnimatePresence initial={false} mode="wait">
+            {currentSection === 'home' && (
+              <motion.section
+                key="home"
+                className="relative h-screen flex items-center justify-center overflow-hidden"
+                variants={pageVariants}
+                initial="initial"
+                animate="in"
+                exit="out"
+                custom={direction}
+                transition={pageTransition}
+              >
+                <div className="absolute inset-0 z-0">
+                  {images.map((src, index) => (
+                    <ParallaxImage key={src} src={src} alt={`Artwork ${index + 1}`} index={index} />
                   ))}
-                </motion.div>
-                <motion.p
-                  className="text-base md:text-lg max-w-2xl mx-auto mb-12 text-gray-700 px-6 
-                             leading-relaxed font-light tracking-wide"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.8 }}
-                >
-                  Blending traditional artistry with contemporary vision, creating unique visual narratives 
-                  that transcend conventional boundaries. Each piece tells a story, each design carries meaning.
-                </motion.p>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8, duration: 0.8 }}
-                  className="flex flex-col sm:flex-row gap-4 sm:gap-6"
-                >
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleSectionChange('contact')}
-                    className="bg-black text-white px-8 py-3 rounded-full hover:bg-white 
-                               hover:text-black transition-all duration-300 border border-black
-                               shadow-lg hover:shadow-xl"
-                  >
-                    Get in Touch
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleSectionChange('art')}
-                    className="bg-transparent text-black px-8 py-3 rounded-full hover:bg-black 
-                               hover:text-white transition-all duration-300 border border-black
-                               shadow-lg hover:shadow-xl"
-                  >
-                    View Portfolio
-                  </motion.button>
-                </motion.div>
-              </div>
-            </motion.section>
-          )}
-
-          {currentSection === 'about' && (
-            <motion.section
-              key="about"
-              className="min-h-screen pt-24 px-4"
-              variants={pageVariants}
-              initial="initial"
-              animate="in"
-              exit="out"
-              custom={direction}
-              transition={pageTransition}
-            >
-              <BiographySection />
-            </motion.section>
-          )}
-
-          {currentSection === 'art' && (
-            <motion.section
-              key="art"
-              className="min-h-screen pt-24 px-4"
-              variants={pageVariants}
-              initial="initial"
-              animate="in"
-              exit="out"
-              custom={direction}
-              transition={pageTransition}
-            >
-              <ArtSection
-                artSubsection={artSubsection}
-                onSubsectionChange={handleArtSubsectionChange}
-                onFullscreenImage={handleFullscreenImage}
-              />
-            </motion.section>
-          )}
-
-          {currentSection === 'contact' && (
-            <motion.section
-              key="contact"
-              className="min-h-screen flex flex-col justify-center items-center p-8 pt-24"
-              variants={pageVariants}
-              initial="initial"
-              animate="in"
-              exit="out"
-              custom={direction}
-              transition={pageTransition}
-            >
-              <div className="max-w-md w-full space-y-4">
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.5 }}
-                  className="text-center mb-6"
-                >
-                  <p className="text-lg font-light text-gray-800">
-                    Looking to book a tattoo appointment, request a commission, or ask a question? Contact me anytime!
-                  </p>
-                </motion.div>
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div className="flex flex-col space-y-1">
-                    <label htmlFor="name" className="text-sm text-gray-700">Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="border border-gray-300 rounded-md p-2"
-                      required
+                </div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center 
+                                bg-gradient-to-b from-white/80 via-white/70 to-transparent backdrop-blur-[1px] p-4 z-10">
+                  <motion.div className="w-full flex justify-center mb-8">
+                    <Image
+                      src="/logo.png"
+                      alt="Bahar Sener Logo"
+                      width={150}
+                      height={150}
+                      className="drop-shadow-lg"
                     />
-                  </div>
-                  <div className="flex flex-col space-y-1">
-                    <label htmlFor="email" className="text-sm text-gray-700">Email</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="border border-gray-300 rounded-md p-2"
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col space-y-1">
-                    <label htmlFor="phone" className="text-sm text-gray-700">Phone</label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="border border-gray-300 rounded-md p-2"
-                    />
-                  </div>
-                  <div className="flex flex-col space-y-1">
-                    <label htmlFor="message" className="text-sm text-gray-700">Message</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      rows={4}
-                      className="border border-gray-300 rounded-md p-2"
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 w-full"
-                    disabled={formStatus === 'submitting'}
-                  >
-                    {formStatus === 'submitting' ? 'Sending...' : 'Send'}
-                  </button>
-                  {formStatus === 'success' && (
-                    <p className="text-green-600 text-sm mt-2">Message sent successfully!</p>
-                  )}
-                  {formStatus === 'error' && (
-                    <p className="text-red-600 text-sm mt-2">Error sending message. Please try again.</p>
-                  )}
-                </form>
-              </div>
-            </motion.section>
-          )}
-        </AnimatePresence>
-      </main>
+                  </motion.div>
+                  <motion.div className="text-xl md:text-2xl lg:text-3xl mb-8 md:mb-10 text-gray-800 
+                          tracking-wide flex flex-col md:flex-row items-center justify-center 
+                          space-y-6 md:space-y-0 md:space-x-12">
+                    {['TATTOO ART', 'COLLAGE ART', 'ILLUSTRATION'].map((text) => (
+                      <motion.span
+                        key={text}
+                        className="cursor-pointer relative group"
+                        onClick={() => handleArtClick(text.split(' ')[0].toLowerCase() as 'tattoo' | 'collage' | 'illustration')}
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        {text}
+                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 
+                                       group-hover:w-full" />
+                      </motion.span>
+                    ))}
+                  </motion.div>
+                  <motion.p className="text-base md:text-lg max-w-2xl mx-auto mb-12 md:mb-16 
+                        text-gray-700 leading-relaxed font-light tracking-wide">
+                    Blending traditional artistry with contemporary vision, creating unique visual narratives 
+                    that transcend conventional boundaries. Each piece tells a story, each design carries meaning.
+                  </motion.p>
+                  <motion.div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleSectionChange('contact')}
+                      className="bg-black text-white px-8 py-3 rounded-full hover:bg-white 
+                                 hover:text-black transition-all duration-300 border border-black
+                                 shadow-lg hover:shadow-xl"
+                    >
+                      Get in Touch
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleSectionChange('art')}
+                      className="bg-transparent text-black px-8 py-3 rounded-full hover:bg-black 
+                                 hover:text-white transition-all duration-300 border border-black
+                                 shadow-lg hover:shadow-xl"
+                    >
+                      View Portfolio
+                    </motion.button>
+                  </motion.div>
+                </div>
+              </motion.section>
+            )}
 
-      {fullscreenImage && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-95"
-          onClick={handleCloseFullscreenImage}
-        >
-          <div className="relative max-w-2xl w-full h-auto" style={{ height: '80vh' }}>
-            <Image
-              src={fullscreenImage}
-              alt="Fullscreen"
-              layout="fill"
-              objectFit="contain"
-              onError={(e) => {
-                console.error("Error loading image:", e);
-                e.currentTarget.src = "/fallback.png"; // Updated fallback image path
-              }}
-            />
-          </div>
-          <button
-            className="absolute top-4 right-4 text-black"
+            {currentSection === 'about' && (
+              <motion.section
+                key="about"
+                className="min-h-screen pt-24 px-4"
+                variants={pageVariants}
+                initial="initial"
+                animate="in"
+                exit="out"
+                custom={direction}
+                transition={pageTransition}
+              >
+                <BiographySection />
+              </motion.section>
+            )}
+
+            {currentSection === 'art' && (
+              <motion.section
+                key="art"
+                className="min-h-screen pt-24 px-4"
+                variants={pageVariants}
+                initial="initial"
+                animate="in"
+                exit="out"
+                custom={direction}
+                transition={pageTransition}
+              >
+                <ArtSection
+                  artSubsection={artSubsection}
+                  onSubsectionChange={handleArtSubsectionChange}
+                  onFullscreenImage={handleFullscreenImage}
+                />
+              </motion.section>
+            )}
+
+            {currentSection === 'contact' && (
+              <motion.section
+                key="contact"
+                className="min-h-screen flex flex-col justify-center items-center p-8 pt-24"
+                variants={pageVariants}
+                initial="initial"
+                animate="in"
+                exit="out"
+                custom={direction}
+                transition={pageTransition}
+              >
+                <div className="max-w-md w-full space-y-4">
+                  <motion.div className="text-center mb-10">
+                    <h2 className="text-2xl md:text-3xl mb-4">Get in Touch</h2>
+                    <p className="text-lg font-light text-gray-800">
+                      Looking to book a tattoo appointment, request a commission, or ask a question? 
+                      Contact me anytime!
+                    </p>
+                  </motion.div>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="flex flex-col space-y-2">
+                      <label htmlFor="name" className="text-sm font-medium text-gray-700">Name</label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 rounded-lg p-3 focus:ring-2 
+                                  focus:ring-black focus:border-transparent transition-all"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <label htmlFor="email" className="text-sm font-medium text-gray-700">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 rounded-lg p-3 focus:ring-2 
+                                  focus:ring-black focus:border-transparent transition-all"
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 rounded-lg p-3 focus:ring-2 
+                                  focus:ring-black focus:border-transparent transition-all"
+                      />
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                      <label htmlFor="message" className="text-sm font-medium text-gray-700">Message</label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        rows={4}
+                        className="border border-gray-300 rounded-lg p-3 focus:ring-2 
+                                  focus:ring-black focus:border-transparent transition-all"
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 w-full"
+                      disabled={formStatus === 'submitting'}
+                    >
+                      {formStatus === 'submitting' ? 'Sending...' : 'Send'}
+                    </button>
+                    {formStatus === 'success' && (
+                      <p className="text-green-600 text-sm mt-2">Message sent successfully!</p>
+                    )}
+                    {formStatus === 'error' && (
+                      <p className="text-red-600 text-sm mt-2">Error sending message. Please try again.</p>
+                    )}
+                  </form>
+                </div>
+              </motion.section>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {fullscreenImage && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-95"
             onClick={handleCloseFullscreenImage}
-            aria-label="Close fullscreen"
           >
-            <X size={24} />
-          </button>
-        </motion.div>
-      )}
+            <div className="relative max-w-2xl w-full h-auto" style={{ height: '80vh' }}>
+              <Image
+                src={fullscreenImage}
+                alt="Fullscreen"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            <button
+              className="absolute top-6 right-6 text-black hover:text-gray-600 
+                         transition-colors p-2"
+              onClick={handleCloseFullscreenImage}
+              aria-label="Close fullscreen"
+            >
+              <X size={28} />
+            </button>
+          </motion.div>
+        )}
 
-      <footer className="fixed bottom-0 left-0 w-full p-2 bg-white bg-opacity-50 backdrop-blur-sm flex justify-center items-center">
-        <p className="text-xs text-gray-600">&copy; 2023 Bahar Şener. All rights reserved.</p>
-      </footer>
+        <footer className="fixed bottom-0 left-0 w-full p-2 bg-white bg-opacity-50 backdrop-blur-sm flex justify-between items-center px-4">
+          <p className="text-xs text-gray-600">&copy; 2023 Bahar Şener. All rights reserved.</p>
+          <div className="flex items-center">
+            {socialLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <link.icon className="h-4 w-4" />
+              </a>
+            ))}
+          </div>
+        </footer>
+      </main>
     </div>
   );
 }

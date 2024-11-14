@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ZoomIn, ArrowLeft } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import React from 'react';
 
 interface ArtSectionProps {
     artSubsection: 'tattoo' | 'illustration' | 'collage' | null;
@@ -15,7 +16,15 @@ const categories = [
     { name: 'collage', title: 'Collage Art' },
 ] as const;
 
-const works = {
+type WorkItem = {
+    src: string;
+};
+
+type Works = {
+    [K in 'tattoo' | 'illustration' | 'collage']: WorkItem[];
+};
+
+const works: Works = {
     tattoo: [
         { src: '/tattoo1.jpg' },
         { src: '/tattoo2.jpg' },
@@ -85,7 +94,7 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                 variants={staggerContainer}
                 initial="initial"
                 animate="animate"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8"
             >
                 {artworks.map(({ src }, index) => (
                     <motion.div
@@ -116,9 +125,14 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                             <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                                 <button
                                     onClick={() => onFullscreenImage(src)}
-                                    className="bg-white/90 hover:bg-white text-black px-4 py-2 rounded-full text-sm flex items-center mx-auto backdrop-blur-sm transition-colors"
+                                    onKeyDown={(e) => e.key === 'Enter' && onFullscreenImage(src)}
+                                    className="bg-white/90 hover:bg-white text-black px-4 py-2 rounded-full flex items-center"
+                                    aria-label="View artwork in full size"
+                                    role="button"
+                                    tabIndex={0}
                                 >
-                                    <ZoomIn size={18} className="mr-2" /> View Full Size
+                                    <ZoomIn size={18} className="mr-2" aria-hidden="true" />
+                                    <span>View Full Size</span>
                                 </button>
                             </div>
                         </div>
@@ -127,6 +141,38 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
             </motion.div>
         );
     };
+
+    const LoadingSkeleton = () => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+            {[...Array(6)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                    <div className="aspect-[4/5] bg-gray-200 rounded-2xl" />
+                </div>
+            ))}
+        </div>
+    );
+
+    class ErrorBoundary extends React.Component<
+      { children: React.ReactNode },
+      { hasError: boolean }
+    > {
+      constructor(props: { children: React.ReactNode }) {
+        super(props);
+        this.state = { hasError: false };
+      }
+
+      static getDerivedStateFromError(_: Error) {
+        return { hasError: true };
+      }
+
+      render() {
+        if (this.state.hasError) {
+          return <div>Something went wrong.</div>;
+        }
+
+        return this.props.children;
+      }
+    }
 
     return (
         <div className="w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mt-16 sm:mt-32">
