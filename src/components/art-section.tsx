@@ -142,38 +142,6 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
         );
     };
 
-    const LoadingSkeleton = () => (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
-            {[...Array(6)].map((_, i) => (
-                <div key={i} className="animate-pulse">
-                    <div className="aspect-[4/5] bg-gray-200 rounded-2xl" />
-                </div>
-            ))}
-        </div>
-    );
-
-    class ErrorBoundary extends React.Component<
-      { children: React.ReactNode },
-      { hasError: boolean }
-    > {
-      constructor(props: { children: React.ReactNode }) {
-        super(props);
-        this.state = { hasError: false };
-      }
-
-      static getDerivedStateFromError(_: Error) {
-        return { hasError: true };
-      }
-
-      render() {
-        if (this.state.hasError) {
-          return <div>Something went wrong.</div>;
-        }
-
-        return this.props.children;
-      }
-    }
-
     return (
         <div className="w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mt-16 sm:mt-32">
             {!artSubsection ? (
