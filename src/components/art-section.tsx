@@ -17,28 +17,28 @@ const categories = [
 
 const works = {
     tattoo: [
-        { src: '/tattoo1.jpg', title: 'Tattoo Work 1' },
-        { src: '/tattoo2.jpg', title: 'Tattoo Work 2' },
-        { src: '/tattoo3.jpg', title: 'Tattoo Work 3' },
-        { src: '/tattoo4.jpg', title: 'Tattoo Work 4' },
-        { src: '/tattoo5.jpg', title: 'Tattoo Work 5' },
+        { src: '/tattoo1.jpg' },
+        { src: '/tattoo2.jpg' },
+        { src: '/tattoo3.jpg' },
+        { src: '/tattoo4.jpg' },
+        { src: '/tattoo5.jpg' },
     ],
     illustration: [
-        { src: '/illustration1.jpg', title: 'Illustration Work 1' },
-        { src: '/illustration2.jpg', title: 'Illustration Work 2' },
-        { src: '/illustration3.jpg', title: 'Illustration Work 3' },
-        { src: '/illustration4.jpg', title: 'Illustration Work 4' },
-        { src: '/illustration5.jpg', title: 'Illustration Work 5' },
-        { src: '/illustration6.jpg', title: 'Illustration Work 6' },
-        { src: '/illustration7.jpg', title: 'Illustration Work 7' },
-        { src: '/illustration8.jpg', title: 'Illustration Work 8' },
-        { src: '/illustration9.jpg', title: 'Illustration Work 9' },
+        { src: '/illustration1.jpg' },
+        { src: '/illustration2.jpg' },
+        { src: '/illustration3.jpg' },
+        { src: '/illustration4.jpg' },
+        { src: '/illustration5.jpg' },
+        { src: '/illustration6.jpg' },
+        { src: '/illustration7.jpg' },
+        { src: '/illustration8.jpg' },
+        { src: '/illustration9.jpg' },
     ],
     collage: [
-        { src: '/collage1.jpg', title: 'Urban Fragments' },
-        { src: '/collage2.jpg', title: 'Nature Remix' },
-        { src: '/collage3.jpg', title: 'Retro Futurism' },
-        { src: '/collage4.jpg', title: 'Pop Culture Mashup' },
+        { src: '/collage1.jpg' },
+        { src: '/collage2.jpg' },
+        { src: '/collage3.jpg' },
+        { src: '/collage4.jpg' },
     ],
 };
 
@@ -47,6 +47,21 @@ function getRandomImage(category: keyof typeof works): string {
     const randomIndex = Math.floor(Math.random() * categoryWorks.length);
     return categoryWorks[randomIndex].src;
 }
+
+// Add new animation variants
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: 20 }
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImage }: ArtSectionProps) {
     const [imageError, setImageError] = useState<Record<string, boolean>>({});
@@ -66,25 +81,28 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
 
     const renderArtworks = (artworks: typeof works[keyof typeof works]) => {
         return (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {artworks.map(({ src, title }, index) => (
+            <motion.div 
+                variants={staggerContainer}
+                initial="initial"
+                animate="animate"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"
+            >
+                {artworks.map(({ src }, index) => (
                     <motion.div
                         key={index}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="group relative overflow-hidden rounded-lg shadow-md"
+                        variants={fadeInUp}
+                        className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
                     >
-                        <div className="aspect-square relative bg-gray-200">
+                        <div className="aspect-[4/5] relative bg-gray-100">
                             {!imageError[src] && (
                                 <Image
                                     src={src}
-                                    alt={title}
+                                    alt={`Artwork ${index + 1}`}
                                     layout="fill"
                                     objectFit="cover"
-                                    className="transition-transform duration-300 group-hover:scale-105"
+                                    className="transition-all duration-500 group-hover:scale-110"
                                     onError={() => handleImageError(src)}
-                                    sizes="(max-width: 768px) 50vw, 33vw"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     loading="lazy"
                                 />
                             )}
@@ -94,49 +112,55 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                                 </div>
                             )}
                         </div>
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-300 flex items-center justify-center">
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                whileHover={{ opacity: 1 }}
-                                className="text-white text-center p-4"
-                            >
-                                <h3 className="text-lg font-light mb-2">{title}</h3>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-6">
+                            <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                                 <button
                                     onClick={() => onFullscreenImage(src)}
-                                    className="bg-white text-black px-3 py-1 rounded-full text-sm flex items-center mx-auto"
+                                    className="bg-white/90 hover:bg-white text-black px-4 py-2 rounded-full text-sm flex items-center mx-auto backdrop-blur-sm transition-colors"
                                 >
-                                    <ZoomIn size={16} className="mr-1" /> View
+                                    <ZoomIn size={18} className="mr-2" /> View Full Size
                                 </button>
-                            </motion.div>
+                            </div>
                         </div>
                     </motion.div>
                 ))}
-            </div>
+            </motion.div>
         );
     };
 
     return (
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-16 sm:mt-24">
+        <div className="w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mt-16 sm:mt-32">
             {!artSubsection ? (
-                <div className="space-y-12">
-                    <h2 className="text-4xl font-light text-center mb-12">Art Portfolio</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <motion.div 
+                    initial="initial"
+                    animate="animate"
+                    variants={fadeInUp}
+                    className="space-y-16"
+                >
+                    <h2 className="text-5xl font-light text-center mb-16 tracking-tight">
+                        <span className="block text-xl text-gray-500 mb-4">Explore</span>
+                        Art Portfolio
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
                         {categoriesWithRandomImages.map((category) => (
                             <motion.div
                                 key={category.name}
-                                className="relative overflow-hidden rounded-lg shadow-lg cursor-pointer group"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                className="relative overflow-hidden rounded-2xl shadow-xl cursor-pointer group h-[500px] sm:h-[600px] md:h-[400px]"
+                                whileHover={{ 
+                                    scale: 1.03,
+                                    transition: { duration: 0.3 }
+                                }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={() => onSubsectionChange(category.name)}
                             >
-                                <div className="aspect-[3/4] relative bg-gray-200">
+                                <div className="absolute inset-0 bg-gray-100">
                                     {!imageError[category.image] && (
                                         <Image
                                             src={category.image}
                                             alt={category.title}
                                             layout="fill"
                                             objectFit="cover"
-                                            className="transition-transform duration-300 group-hover:scale-110"
+                                            className="transition-transform duration-500 group-hover:scale-110"
                                             onError={() => handleImageError(category.image)}
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             loading="lazy"
@@ -148,27 +172,32 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                                         </div>
                                     )}
                                 </div>
-                                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                                    <h3 className="text-white text-2xl font-light tracking-wider">{category.title}</h3>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end justify-center p-8">
+                                    <div className="text-white text-center">
+                                        <h3 className="text-3xl font-light tracking-wide mb-2">{category.title}</h3>
+                                        <p className="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            Click to explore
+                                        </p>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
                     </div>
-                </div>
+                </motion.div>
             ) : (
-                <div className="space-y-8">
+                <div className="space-y-12">
                     <div className="flex justify-between items-center">
                         <motion.button
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex items-center text-gray-600 hover:text-black transition-colors"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center text-gray-600 hover:text-black transition-colors group"
                             onClick={() => onSubsectionChange(null)}
                         >
-                            <ArrowLeft size={20} className="mr-2" />
-                            <span className="hidden sm:inline">Back to Art Portfolio</span>
+                            <ArrowLeft size={20} className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                            <span className="hidden sm:inline">Back to Portfolio</span>
                             <span className="sm:hidden">Back</span>
                         </motion.button>
-                        <h2 className="text-3xl font-light text-center">
+                        <h2 className="text-4xl font-light">
                             {categories.find(c => c.name === artSubsection)?.title}
                         </h2>
                     </div>

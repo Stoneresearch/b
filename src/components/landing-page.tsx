@@ -24,12 +24,11 @@ const FluidBackground = () => {
   useEffect(() => {
     const animateBackground = async () => {
       await controls.start({
-        scale: [1, 1.1, 1],
-        rotate: [0, 90, 180, 270, 360],
-        borderRadius: ["20%", "40%", "60%", "40%", "20%"],
+        scale: [1, 1.05, 1],
+        filter: ["hue-rotate(0deg)", "hue-rotate(180deg)", "hue-rotate(360deg)"],
         transition: {
-          duration: 20,
-          ease: "easeInOut",
+          duration: 30,
+          ease: "linear",
           repeat: Infinity,
           repeatType: "reverse"
         }
@@ -41,7 +40,11 @@ const FluidBackground = () => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-0 opacity-10 bg-gradient-to-r from-purple-100 via-pink-100 to-red-100"
+      className="fixed inset-0 z-0 opacity-20"
+      style={{
+        background: 'radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.4), rgba(239, 68, 68, 0.4))',
+        filter: 'blur(15px)'
+      }}
       animate={controls}
     />
   );
@@ -296,52 +299,79 @@ export function LandingPage() {
                   <ParallaxImage key={src} src={src} alt={`Artwork ${index + 1}`} index={index} />
                 ))}
               </div>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center bg-white bg-opacity-70 p-4 z-10">
-                <div className="w-full flex justify-center mb-4 md:mb-8">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center 
+                              bg-gradient-to-b from-white/80 via-white/70 to-transparent backdrop-blur-[1px] p-4 z-10">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="w-full flex justify-center mb-8"
+                >
                   <Image
                     src="/logo.png"
                     alt="Bahar Sener Logo"
-                    width={120}
-                    height={120}
-                    className="md:mb-0"
-                    style={{ marginLeft: '0px' }}
+                    width={150}
+                    height={150}
+                    className="drop-shadow-lg"
                   />
-                </div>
+                </motion.div>
                 <motion.div
-                  className="text-lg md:text-xl lg:text-2xl mb-4 text-gray-800 text-center font-light tracking-wide flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-4"
+                  className="text-xl md:text-2xl lg:text-3xl mb-6 text-gray-800 tracking-wide 
+                             flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
                 >
-                  <span 
-                    className="cursor-pointer hover:text-gray-600 transition-colors"
-                    onClick={() => handleArtClick('tattoo')}
-                  >
-                    TATTOO ART
-                  </span>
-                  <span className="hidden md:inline text-2xl md:text-3xl lg:text-4xl">·</span>
-                  <span 
-                    className="cursor-pointer hover:text-gray-600 transition-colors"
-                    onClick={() => handleArtClick('collage')}
-                  >
-                    COLLAGE ART
-                  </span>
-                  <span className="hidden md:inline text-2xl md:text-3xl lg:text-4xl">·</span>
-                  <span 
-                    className="cursor-pointer hover:text-gray-600 transition-colors"
-                    onClick={() => handleArtClick('illustration')}
-                  >
-                    ILLUSTRATION
-                  </span>
+                  {['TATTOO ART', 'COLLAGE ART', 'ILLUSTRATION'].map((text, index) => (
+                    <motion.span
+                      key={text}
+                      className="cursor-pointer relative group"
+                      onClick={() => handleArtClick(text.split(' ')[0].toLowerCase() as 'tattoo' | 'collage' | 'illustration')}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      {text}
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 
+                                     group-hover:w-full" />
+                    </motion.span>
+                  ))}
                 </motion.div>
                 <motion.p
-                  className="text-sm md:text-base lg:text-lg max-w-2xl mx-auto mb-8 text-gray-700 p-4 text-center font-light"
+                  className="text-base md:text-lg max-w-2xl mx-auto mb-12 text-gray-700 px-6 
+                             leading-relaxed font-light tracking-wide"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6, duration: 0.8 }}
                 >
-                  Bahar Sener blends traditional art with modern techniques, creating captivating visual stories that bridge cultures and emotions. Her unique approach to design and tattooing reflects a deep passion for artistic expression and human connection.
+                  Blending traditional artistry with contemporary vision, creating unique visual narratives 
+                  that transcend conventional boundaries. Each piece tells a story, each design carries meaning.
                 </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8, duration: 0.8 }}
+                  className="flex flex-col sm:flex-row gap-4 sm:gap-6"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleSectionChange('contact')}
+                    className="bg-black text-white px-8 py-3 rounded-full hover:bg-white 
+                               hover:text-black transition-all duration-300 border border-black
+                               shadow-lg hover:shadow-xl"
+                  >
+                    Get in Touch
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleSectionChange('art')}
+                    className="bg-transparent text-black px-8 py-3 rounded-full hover:bg-black 
+                               hover:text-white transition-all duration-300 border border-black
+                               shadow-lg hover:shadow-xl"
+                  >
+                    View Portfolio
+                  </motion.button>
+                </motion.div>
               </div>
             </motion.section>
           )}

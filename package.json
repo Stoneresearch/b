@@ -12,10 +12,12 @@
   "dependencies": {
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.292.0",
-    "next": "^13.5.7",
+    "next": "^15.0.0",
     "nodemailer": "^6.9.15",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "sharp": "^0.33.5",
+    "webpack": "^5.95.0"
   },
   "devDependencies": {
     "@types/node": "^20.5.7",
