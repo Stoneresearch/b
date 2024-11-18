@@ -311,7 +311,7 @@ export function LandingPage() {
                 <div 
                   className="absolute inset-0 z-0 mt-[80px]"
                   style={{
-                    backgroundImage: "url('/bahar1.png')",
+                    backgroundImage: "url('/bahar1.jpg')",
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
