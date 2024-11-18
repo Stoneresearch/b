@@ -1,78 +1,26 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useAnimation, useScroll, useTransform } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 import { ArtSection } from './art-section';
 import { Instagram } from 'lucide-react';
+import React from 'react';
 
 const AnimatedLink = ({ children, onClick, isActive }: { children: React.ReactNode; onClick: () => void; isActive: boolean }) => (
   <motion.span
-    className={`text-sm uppercase tracking-wider ${isActive ? 'text-black' : 'text-gray-600'} hover:text-black transition-colors`}
-    whileHover={{ scale: 1.02 }}
-    whileTap={{ scale: 0.99 }}
-    transition={{ duration: 0.3 }}
+    className={`text-lg tracking-wide cursor-pointer ${
+      isActive ? 'text-black font-medium' : 'text-black/70'
+    } hover:text-black transition-colors font-sfpro`}
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    transition={{ duration: 0.2 }}
     onClick={onClick}
   >
     {children}
   </motion.span>
 );
-
-const FluidBackground = () => {
-  const controls = useAnimation();
-
-  useEffect(() => {
-    const animateBackground = async () => {
-      await controls.start({
-        scale: [1, 1.05, 1],
-        filter: ["hue-rotate(0deg)", "hue-rotate(180deg)", "hue-rotate(360deg)"],
-        transition: {
-          duration: 30,
-          ease: "linear",
-          repeat: Infinity,
-          repeatType: "reverse"
-        }
-      });
-    };
-
-    animateBackground();
-  }, [controls]);
-
-  return (
-    <motion.div
-      className="fixed inset-0 z-0 opacity-20"
-      style={{
-        background: 'radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.4), rgba(239, 68, 68, 0.4))',
-        filter: 'blur(15px)'
-      }}
-      animate={controls}
-    />
-  );
-};
-
-const ParallaxImage = ({ src, alt, index }: { src: string; alt: string; index: number }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref });
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', `${10 * (index + 1)}%`]);
-
-  return (
-    <motion.div
-      ref={ref}
-      className="absolute inset-0"
-      style={{ y, zIndex: -index }}
-    >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover"
-        sizes="100vw"
-        priority={index === 0}
-      />
-    </motion.div>
-  );
-};
 
 const BiographySection = () => {
   const containerRef = useRef(null);
@@ -82,25 +30,20 @@ const BiographySection = () => {
   });
 
   const x1 = useTransform(scrollYProgress, [0, 1], ['-100%', '0%']);
-  const x2 = useTransform(scrollYProgress, [0, 1], ['100%', '0%']);
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
 
   return (
     <div ref={containerRef} className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
       <motion.div
-        className="absolute top-1/4 left-0 w-full text-6xl font-bold text-gray-200"
+        className="absolute top-1/3 w-full text-6xl md:text-7xl font-bold text-gray-200/60"
         style={{ x: x1, opacity }}
       >
-        Visual Artist
-      </motion.div>
-      <motion.div
-        className="absolute top-2/4 right-0 w-full text-right text-6xl font-bold text-gray-200"
-        style={{ x: x2, opacity }}
-      >
-        Tattoo Artist
+        Illustration
       </motion.div>
       <div className="max-w-3xl mx-auto px-4 text-center">
-        <h2 className="text-3xl mb-6 text-black">Bahar Şener</h2>
+        <h2 className="text-5xl md:text-6xl mb-8 font-light tracking-[.5em] bg-gradient-to-br from-black via-gray-600 to-black bg-clip-text text-transparent transform hover:scale-105 transition-transform duration-500">
+          Bahar Şener
+        </h2>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -139,21 +82,78 @@ const pageTransition = {
 
 const MobileMenuLink = ({ children, onClick, isActive }: { children: React.ReactNode; onClick: () => void; isActive: boolean }) => (
   <motion.div
-    className={`text-2xl font-light tracking-wider ${isActive ? 'text-black' : 'text-gray-600'} hover:text-black transition-colors cursor-pointer`}
-    whileHover={{ scale: 1.05, x: 10 }}
-    whileTap={{ scale: 0.95 }}
-    transition={{ duration: 0.2 }}
+    className={`text-3xl tracking-tight font-medium relative overflow-hidden
+      ${isActive ? 'text-black' : 'text-gray-600'} 
+      hover:text-zinc-800 hover:shadow-sm
+      transition-all duration-300 cursor-pointer
+      before:content-[''] before:absolute before:top-0 before:left-[-100%] before:w-full before:h-full
+      before:bg-gradient-to-r before:from-transparent before:via-zinc-400/10 before:to-transparent
+      hover:before:left-[100%] before:transition-all before:duration-700
+    `}
+    whileHover={{ 
+      scale: 1.02,
+      x: 5,
+      transition: { 
+        type: "spring",
+        stiffness: 300,
+        damping: 10,
+        mass: 0.8,
+        duration: 0.3
+      }
+    }}
+    whileTap={{ 
+      scale: 0.98,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 10
+      }
+    }}
+    animate={{ 
+      y: [0, -2, 0],
+      transition: {
+        repeat: Infinity,
+        repeatType: "reverse",
+        duration: 2,
+        ease: "easeInOut"
+      }
+    }}
     onClick={onClick}
   >
     {children}
   </motion.div>
 );
 
-const socialLinks = [
+type IconProps = { size?: number; className?: string };
+type IconComponent = React.ComponentType<IconProps>;
+
+interface SocialLink {
+  name: string;
+  href: string;
+  icon: IconComponent | ((props: IconProps) => JSX.Element);
+}
+
+const socialLinks: SocialLink[] = [
   {
     name: 'Instagram',
     href: 'https://instagram.com/baharssener',
-    icon: Instagram
+    icon: Instagram as IconComponent
+  },
+  {
+    name: 'WhatsApp',
+    href: 'https://wa.me/905322011992',
+    icon: ({ size, className }: IconProps) => (
+      <svg 
+        width={size} 
+        height={size} 
+        className={className}
+        viewBox="0 0 24 24" 
+        fill="currentColor"
+      >
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm6.067 16.511c-.272.861-.847 1.564-1.488 2.164-.793.659-1.758 1.117-2.853 1.314-.771.097-1.514.097-2.285.001-1.879-.271-3.504-1.151-4.719-2.366-1.215-1.215-2.095-2.84-2.366-4.719-.096-.771-.096-1.514.001-2.285.197-1.095.655-2.06 1.314-2.853.6-.641 1.303-1.216 2.164-1.488.441-.137.902-.203 1.363-.203h.09c.685.012 1.258.156 1.846.346.588.19 1.145.458 1.674.764 1.588.918 2.844 2.267 3.629 3.916.529.976.824 2.05.861 3.163.037 1.113-.166 2.197-.598 3.183l.267.383z"/>
+      </svg>
+    )
   }
 ];
 
@@ -164,11 +164,6 @@ export function LandingPage() {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const mainRef = useRef<HTMLDivElement>(null);
   const [artSubsection, setArtSubsection] = useState<'tattoo' | 'illustration' | 'collage' | null>(null);
-
-  const images = [
-    '/bahar1.png',  // Reverted back to .png
-    '/bahar2.jpg',  // This remains as .jpg as per your previous request
-  ];
 
   const [formData, setFormData] = useState({
     name: '',
@@ -233,18 +228,11 @@ export function LandingPage() {
     setFullscreenImage(null);
   };
 
-  const handleArtClick = (subsection: 'tattoo' | 'collage' | 'illustration') => {
-    handleSectionChange('art');
-    handleArtSubsectionChange(subsection);
-  };
-
   return (
     <div className="min-h-screen bg-white text-black overflow-hidden font-light">
-      <FluidBackground />
-
       <header className="fixed top-0 left-0 w-full p-4 flex justify-between items-center z-50">
         <motion.div
-          className="ml-4 cursor-none hidden md:block"
+          className="ml-4 cursor-pointer hidden md:block"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -256,40 +244,56 @@ export function LandingPage() {
             width={100}
             height={50}
             className="object-contain"
+            priority
           />
         </motion.div>
         <nav className="hidden md:flex space-x-8 mr-4">
-          <AnimatedLink onClick={() => handleSectionChange('home')} isActive={currentSection === 'home'}>Home</AnimatedLink>
-          <AnimatedLink onClick={() => handleSectionChange('about')} isActive={currentSection === 'about'}>About</AnimatedLink>
-          <AnimatedLink onClick={() => handleSectionChange('art')} isActive={currentSection === 'art'}>Art</AnimatedLink>
-          <AnimatedLink onClick={() => handleSectionChange('contact')} isActive={currentSection === 'contact'}>Contact</AnimatedLink>
+          <AnimatedLink onClick={() => handleSectionChange('home')} isActive={currentSection === 'home'}>
+            <span className="text-lg font-sfpro">Home</span>
+          </AnimatedLink>
+          <AnimatedLink onClick={() => handleSectionChange('about')} isActive={currentSection === 'about'}>
+            <span className="text-lg font-sfpro">About</span>
+          </AnimatedLink>
+          <AnimatedLink onClick={() => handleSectionChange('art')} isActive={currentSection === 'art'}>
+            <span className="text-lg font-sfpro">Art</span>
+          </AnimatedLink>
+          <AnimatedLink onClick={() => handleSectionChange('contact')} isActive={currentSection === 'contact'}>
+            <span className="text-lg font-sfpro">Contact</span>
+          </AnimatedLink>
         </nav>
         <div className="flex items-center md:hidden">
-          <button onClick={() => setMenuOpen(!menuOpen)} className="text-black z-50">
+          <button 
+            onClick={() => setMenuOpen(!menuOpen)} 
+            className="text-black z-50 p-2 transition-colors"
+            aria-label="Toggle menu"
+          >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-      </header>
-
-      <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-white bg-opacity-60 backdrop-blur-md z-40 flex flex-col items-center justify-center md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white/60 backdrop-blur-sm z-40 flex items-center justify-center"
           >
-            <nav className="flex flex-col space-y-8">
-              <MobileMenuLink onClick={() => handleSectionChange('home')} isActive={currentSection === 'home'}>Home</MobileMenuLink>
-              <MobileMenuLink onClick={() => handleSectionChange('about')} isActive={currentSection === 'about'}>About</MobileMenuLink>
-              <MobileMenuLink onClick={() => handleSectionChange('art')} isActive={currentSection === 'art'}>Art</MobileMenuLink>
-              <MobileMenuLink onClick={() => handleSectionChange('contact')} isActive={currentSection === 'contact'}>Contact</MobileMenuLink>
-            </nav>
+            <div className="flex flex-col space-y-2 text-center">
+              <MobileMenuLink onClick={() => handleSectionChange('home')} isActive={currentSection === 'home'}>
+                <span className="font-sfpro">Home</span>
+              </MobileMenuLink>
+              <MobileMenuLink onClick={() => handleSectionChange('about')} isActive={currentSection === 'about'}>
+                <span className="font-sfpro">About</span>
+              </MobileMenuLink>
+              <MobileMenuLink onClick={() => handleSectionChange('art')} isActive={currentSection === 'art'}>
+                <span className="font-sfpro">Art</span>
+              </MobileMenuLink>
+              <MobileMenuLink onClick={() => handleSectionChange('contact')} isActive={currentSection === 'contact'}>
+                <span className="font-sfpro">Contact</span>
+              </MobileMenuLink>
+            </div>
           </motion.div>
         )}
-      </AnimatePresence>
-
+      </header>
       <main ref={mainRef} className="h-screen overflow-y-auto">
         <div className="relative z-0">
           <AnimatePresence initial={false} mode="wait">
@@ -304,51 +308,35 @@ export function LandingPage() {
                 custom={direction}
                 transition={pageTransition}
               >
-                <div className="absolute inset-0 z-0">
-                  {images.map((src, index) => (
-                    <ParallaxImage key={src} src={src} alt={`Artwork ${index + 1}`} index={index} />
-                  ))}
-                </div>
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center 
-                                bg-gradient-to-b from-white/80 via-white/70 to-transparent backdrop-blur-[1px] p-4 z-10">
-                  <motion.div className="w-full flex justify-center mb-8">
+                <div 
+                  className="absolute inset-0 z-0 mt-[80px]"
+                  style={{
+                    backgroundImage: "url('/bahar1.png')",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundAttachment: 'fixed'
+                  }}
+                />
+                <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
+                  <motion.div className="w-full flex justify-center mb-36">
                     <Image
                       src="/logo.png"
                       alt="Bahar Sener Logo"
                       width={150}
                       height={150}
                       className="drop-shadow-lg"
+                      priority
                     />
                   </motion.div>
-                  <motion.div className="text-xl md:text-2xl lg:text-3xl mb-8 md:mb-10 text-gray-800 
-                          tracking-wide flex flex-col md:flex-row items-center justify-center 
-                          space-y-6 md:space-y-0 md:space-x-12">
-                    {['TATTOO ART', 'COLLAGE ART', 'ILLUSTRATION'].map((text) => (
-                      <motion.span
-                        key={text}
-                        className="cursor-pointer relative group"
-                        onClick={() => handleArtClick(text.split(' ')[0].toLowerCase() as 'tattoo' | 'collage' | 'illustration')}
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        {text}
-                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 
-                                       group-hover:w-full" />
-                      </motion.span>
-                    ))}
-                  </motion.div>
-                  <motion.p className="text-base md:text-lg max-w-2xl mx-auto mb-12 md:mb-16 
-                        text-gray-700 leading-relaxed font-light tracking-wide">
-                    Blending traditional artistry with contemporary vision, creating unique visual narratives 
-                    that transcend conventional boundaries. Each piece tells a story, each design carries meaning.
-                  </motion.p>
                   <motion.div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleSectionChange('contact')}
-                      className="bg-black text-white px-8 py-3 rounded-full hover:bg-white 
-                                 hover:text-black transition-all duration-300 border border-black
-                                 shadow-lg hover:shadow-xl"
+                      className="bg-white text-black px-8 py-3 rounded-full hover:bg-black 
+                                 hover:text-white transition-all duration-300 border border-white
+                                 shadow-lg hover:shadow-xl text-base font-medium"
                     >
                       Get in Touch
                     </motion.button>
@@ -356,9 +344,9 @@ export function LandingPage() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleSectionChange('art')}
-                      className="bg-transparent text-black px-8 py-3 rounded-full hover:bg-black 
-                                 hover:text-white transition-all duration-300 border border-black
-                                 shadow-lg hover:shadow-xl"
+                      className="bg-black text-white px-8 py-3 rounded-full hover:bg-white 
+                                 hover:text-black transition-all duration-300 border-2 border-black
+                                 shadow-md hover:shadow-xl text-base font-semibold"
                     >
                       View Portfolio
                     </motion.button>
@@ -414,10 +402,9 @@ export function LandingPage() {
               >
                 <div className="max-w-md w-full space-y-4">
                   <motion.div className="text-center mb-10">
-                    <h2 className="text-2xl md:text-3xl mb-4">Get in Touch</h2>
+                    <h2 className="text-4xl md:text-5xl mb-8 md:mb-10 font-semibold tracking-[.75em] bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent px-8 md:px-16 max-w-4xl mx-auto">Get in Touch</h2>
                     <p className="text-lg font-light text-gray-800">
-                      Looking to book a tattoo appointment, request a commission, or ask a question? 
-                      Contact me anytime!
+                      Ready to book a tattoo appointment, request a custom design or just have a question? Get in touch with me.
                     </p>
                   </motion.div>
                   <form onSubmit={handleSubmit} className="space-y-6">
@@ -474,18 +461,46 @@ export function LandingPage() {
                     </div>
                     <button
                       type="submit"
-                      className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 w-full"
                       disabled={formStatus === 'submitting'}
+                      className="w-full bg-transparent border-2 border-black text-black hover:bg-black hover:text-white transition-all duration-300 py-2.5 px-4 rounded-lg font-medium tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {formStatus === 'submitting' ? 'Sending...' : 'Send'}
+                      {formStatus === 'submitting' ? (
+                        <span>Sending...</span>
+                      ) : formStatus === 'success' ? (
+                        <span>Message Sent!</span>
+                      ) : formStatus === 'error' ? (
+                        <span>Error - Try Again</span>
+                      ) : (
+                        <span>Send Message</span>
+                      )}
                     </button>
                     {formStatus === 'success' && (
                       <p className="text-green-600 text-sm mt-2">Message sent successfully!</p>
                     )}
                     {formStatus === 'error' && (
-                      <p className="text-red-600 text-sm mt-2">Error sending message. Please try again.</p>
+                      <p className="text-red-600 text-sm mt-2">Failed to send message. Please try again.</p>
                     )}
                   </form>
+                  <div className="mt-6 text-center">
+                    <p className="text-sm text-gray-600 mb-3">or</p>
+                    <a
+                      href="https://wa.me/905322011992"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center w-full bg-[#25D366] bg-opacity-10 hover:bg-opacity-20 text-black border-2 border-[#25D366] transition-all duration-300 py-2.5 px-4 rounded-lg font-medium tracking-wide"
+                    >
+                      <svg 
+                        className="w-5 h-5 mr-2" 
+                        fill="currentColor" 
+                        viewBox="0 0 24 24" 
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm6.067 16.511c-.272.861-.847 1.564-1.488 2.164-.793.659-1.758 1.117-2.853 1.314-.771.097-1.514.097-2.285.001-1.879-.271-3.504-1.151-4.719-2.366-1.215-1.215-2.095-2.84-2.366-4.719-.096-.771-.096-1.514.001-2.285.197-1.095.655-2.06 1.314-2.853.6-.641 1.303-1.216 2.164-1.488.441-.137.902-.203 1.363-.203h.09c.685.012 1.258.156 1.846.346.588.19 1.145.458 1.674.764 1.588.918 2.844 2.267 3.629 3.916.529.976.824 2.05.861 3.163.037 1.113-.166 2.197-.598 3.183l.267.383z"/>
+                      </svg>
+                      Message on WhatsApp
+                    </a>
+                  </div>
                 </div>
               </motion.section>
             )}
@@ -518,17 +533,20 @@ export function LandingPage() {
         )}
 
         <footer className="fixed bottom-0 left-0 w-full p-2 bg-white bg-opacity-50 backdrop-blur-sm flex justify-between items-center px-4">
-          <p className="text-xs text-gray-600">&copy; 2023 Bahar Şener. All rights reserved.</p>
-          <div className="flex items-center">
+          <p className="text-xs text-gray-600">&copy; 2024 Bahar Şener. All rights reserved.</p>
+          <div className="flex items-center space-x-4">
             {socialLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className={`text-gray-600 hover:text-gray-900 transition-colors ${link.name === 'WhatsApp' ? 'md:hidden' : ''}`}
               >
-                <link.icon className="h-4 w-4" />
+                {React.createElement(link.icon, { 
+                  size: 20, 
+                  className: "hover:scale-110 transition-transform" 
+                })}
               </a>
             ))}
           </div>

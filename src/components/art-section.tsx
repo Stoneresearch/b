@@ -11,7 +11,7 @@ interface ArtSectionProps {
 }
 
 const categories = [
-    { name: 'tattoo', title: 'Tattoo Art' },
+    { name: 'tattoo', title: 'Tattoo' },
     { name: 'illustration', title: 'Illustrations' },
     { name: 'collage', title: 'Collage Art' },
 ] as const;
@@ -20,9 +20,11 @@ type WorkItem = {
     src: string;
 };
 
-type Works = {
-    [K in 'tattoo' | 'illustration' | 'collage']: WorkItem[];
-};
+interface Works {
+    tattoo: WorkItem[];
+    illustration: WorkItem[];
+    collage: WorkItem[];
+}
 
 const works: Works = {
     tattoo: [
@@ -31,6 +33,9 @@ const works: Works = {
         { src: '/tattoo3.jpg' },
         { src: '/tattoo4.jpg' },
         { src: '/tattoo5.jpg' },
+        { src: '/tattoo6.jpg' },
+        { src: '/tattoo7.jpg' },
+        { src: '/tattoo8.jpg' },
     ],
     illustration: [
         { src: '/illustration1.jpg' },
@@ -51,7 +56,7 @@ const works: Works = {
     ],
 };
 
-function getRandomImage(category: keyof typeof works): string {
+function getRandomImage(category: keyof Works): string {
     const categoryWorks = works[category];
     const randomIndex = Math.floor(Math.random() * categoryWorks.length);
     return categoryWorks[randomIndex].src;
@@ -88,19 +93,19 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
         setImageError(prev => ({ ...prev, [imageSrc]: true }));
     };
 
-    const renderArtworks = (artworks: typeof works[keyof typeof works]) => {
+    const renderArtworks = (artworks: WorkItem[]) => {
         return (
             <motion.div 
                 variants={staggerContainer}
                 initial="initial"
                 animate="animate"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8"
+                className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 sm:gap-6 lg:gap-8"
             >
                 {artworks.map(({ src }, index) => (
                     <motion.div
                         key={index}
                         variants={fadeInUp}
-                        className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                        className="group relative overflow-hidden rounded-lg sm:rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300"
                     >
                         <div className="aspect-[4/5] relative bg-gray-100">
                             {!imageError[src] && (
@@ -109,10 +114,10 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                                     alt={`Artwork ${index + 1}`}
                                     layout="fill"
                                     objectFit="cover"
-                                    className="transition-all duration-500 group-hover:scale-110"
+                                    className="transition-all duration-500 group-hover:scale-105"
                                     onError={() => handleImageError(src)}
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    loading="lazy"
+                                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+                                    priority={true}
                                 />
                             )}
                             {imageError[src] && (
@@ -121,20 +126,21 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                                 </div>
                             )}
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-6">
-                            <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                <button
-                                    onClick={() => onFullscreenImage(src)}
-                                    onKeyDown={(e) => e.key === 'Enter' && onFullscreenImage(src)}
-                                    className="bg-white/90 hover:bg-white text-black px-4 py-2 rounded-full flex items-center"
-                                    aria-label="View artwork in full size"
-                                    role="button"
-                                    tabIndex={0}
-                                >
-                                    <ZoomIn size={18} className="mr-2" aria-hidden="true" />
-                                    <span>View Full Size</span>
-                                </button>
-                            </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-2 sm:p-4">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onFullscreenImage(src);
+                                }}
+                                onKeyDown={(e) => e.key === 'Enter' && onFullscreenImage(src)}
+                                className="bg-white/90 hover:bg-white text-black text-xs sm:text-sm px-3 py-1.5 rounded-full flex items-center mb-2"
+                                aria-label="View artwork in full size"
+                                role="button"
+                                tabIndex={0}
+                            >
+                                <ZoomIn size={14} className="mr-1.5" aria-hidden="true" />
+                                <span>View</span>
+                            </button>
                         </div>
                     </motion.div>
                 ))}
@@ -151,15 +157,17 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                     variants={fadeInUp}
                     className="space-y-16"
                 >
-                    <h2 className="text-5xl font-light text-center mb-16 tracking-tight">
-                        <span className="block text-xl text-gray-500 mb-4">Explore</span>
-                        Art Portfolio
+                    <h2 className="text-center mb-16">
+                        <span className="block text-xl text-gray-500 mb-4 tracking-[.25em]">Explore</span>
+                        <span className="text-5xl md:text-6xl font-light tracking-[.5em] bg-gradient-to-br from-black via-gray-600 to-black bg-clip-text text-transparent transform hover:scale-105 transition-transform duration-500 inline-block">
+                            WORKS
+                        </span>
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                    <div className="grid grid-cols-3 gap-2 sm:grid-cols-3 sm:gap-8 lg:gap-12">
                         {categoriesWithRandomImages.map((category) => (
                             <motion.div
                                 key={category.name}
-                                className="relative overflow-hidden rounded-2xl shadow-xl cursor-pointer group h-[500px] sm:h-[600px] md:h-[400px]"
+                                className="relative overflow-hidden rounded-lg sm:rounded-2xl shadow-md sm:shadow-xl cursor-pointer group h-[150px] sm:h-[600px] md:h-[400px]"
                                 whileHover={{ 
                                     scale: 1.03,
                                     transition: { duration: 0.3 }
@@ -176,8 +184,8 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                                             objectFit="cover"
                                             className="transition-transform duration-500 group-hover:scale-110"
                                             onError={() => handleImageError(category.image)}
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            loading="lazy"
+                                            sizes="(max-width: 768px) 33vw, (max-width: 1200px) 50vw, 33vw"
+                                            priority={true}
                                         />
                                     )}
                                     {imageError[category.image] && (
@@ -186,12 +194,10 @@ export function ArtSection({ artSubsection, onSubsectionChange, onFullscreenImag
                                         </div>
                                     )}
                                 </div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end justify-center p-8">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center p-2 sm:p-6">
                                     <div className="text-white text-center">
-                                        <h3 className="text-3xl font-light tracking-wide mb-2">{category.title}</h3>
-                                        <p className="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            Click to explore
-                                        </p>
+                                        <h3 className="text-sm sm:text-2xl font-light mb-1 sm:mb-4">{category.title}</h3>
+                                        <p className="text-xs sm:text-base text-gray-300 hidden sm:block">Click to explore</p>
                                     </div>
                                 </div>
                             </motion.div>
