@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 import { ArtSection } from './art-section';
@@ -10,9 +10,15 @@ import React from 'react';
 
 const AnimatedLink = ({ children, onClick, isActive }: { children: React.ReactNode; onClick: () => void; isActive: boolean }) => (
   <motion.span
-    className={`text-lg tracking-wide cursor-pointer ${
-      isActive ? 'text-black font-medium' : 'text-black/70'
-    } hover:text-black transition-colors font-sfpro`}
+    className={`text-lg tracking-wide cursor-pointer relative
+      ${isActive ? 'text-black font-medium' : 'text-black/70'}
+      hover:text-black transition-colors font-sfpro
+      after:content-[''] after:absolute after:bottom-[-4px] after:left-0 
+      after:w-full after:h-[2px] after:bg-black
+      after:transform after:scale-x-0 after:origin-bottom-right
+      after:transition-transform after:duration-300 after:ease-out
+      hover:after:scale-x-100 hover:after:origin-bottom-left
+      md:block hidden`}
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
     transition={{ duration: 0.2 }}
@@ -24,22 +30,9 @@ const AnimatedLink = ({ children, onClick, isActive }: { children: React.ReactNo
 
 const BiographySection = () => {
   const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  const x1 = useTransform(scrollYProgress, [0, 1], ['-100%', '0%']);
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
 
   return (
     <div ref={containerRef} className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
-      <motion.div
-        className="absolute top-1/3 w-full text-6xl md:text-7xl font-bold text-gray-200/60"
-        style={{ x: x1, opacity }}
-      >
-        Illustration
-      </motion.div>
       <div className="max-w-3xl mx-auto px-4 text-center">
         <h2 className="text-5xl md:text-6xl mb-8 font-light tracking-[.5em] bg-gradient-to-br from-black via-gray-600 to-black bg-clip-text text-transparent transform hover:scale-105 transition-transform duration-500">
           Bahar Şener
@@ -481,8 +474,8 @@ export function LandingPage() {
                       <p className="text-red-600 text-sm mt-2">Failed to send message. Please try again.</p>
                     )}
                   </form>
-                  <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-600 mb-3">or</p>
+                  <div className="mt-4 text-center">
+                    <p className="text-sm text-gray-600 mb-2">or</p>
                     <a
                       href="https://wa.me/905322011992"
                       target="_blank"
